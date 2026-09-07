@@ -1,0 +1,17 @@
+# Shared OCI Helm chart repository for all bouc.io application charts.
+# Replaces the 13 per-project GitLab HTTP package-registry HelmRepositories.
+# Default: public charts promoted to ghcr.io; override CHART_REGISTRY in
+# cluster-vars (e.g. registry.gitlab.com/bouc-io/charts) to consume another
+# OCI registry. The secret must exist even for public registries — create it
+# with empty auths ({"auths":{}}) for anonymous access (see README).
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: boucio-charts
+  namespace: default
+spec:
+  type: oci
+  interval: 240m
+  url: oci://${CHART_REGISTRY:=ghcr.io/bouc-io/charts}
+  secretRef:
+    name: ${REGISTRY_SECRET:=registry-credentials}

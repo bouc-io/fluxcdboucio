@@ -1,0 +1,35 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base/apps/examples/fluxcd-charts-helmrepository.yaml
+  - ../../base/apps/examples/fluxcd-chatbot-chart.yaml
+  - ../../base/apps/examples/fluxcd-chatbot-api-chart.yaml
+  - ../../base/apps/examples/fluxcd-admin-chart.yaml
+  - ../../base/apps/examples/fluxcd-memory-api-chart.yaml
+  - ../../base/apps/examples/fluxcd-memory-chart.yaml
+  - ../../base/apps/examples/fluxcd-agent-chart.yaml
+  - ../../base/apps/examples/fluxcd-agent-api-chart.yaml
+  - ../../base/apps/examples/fluxcd-admin-api-chart.yaml
+  - ../../base/apps/examples/fluxcd-ollama-chart.yaml
+  - ../../base/apps/examples/fluxcd-memory-distiller-chart.yaml
+  - ../../base/apps/examples/fluxcd-portal-chart.yaml
+  - ../../base/apps/examples/fluxcd-portal-api-chart.yaml
+  - ../../base/apps/examples/fluxcd-web-chart.yaml
+  - ../../base/apps/examples/fluxcd-apidocs-api-chart.yaml
+
+patches:
+  - path: examples/fluxcd-chatbot-chart.yaml
+  - path: examples/fluxcd-admin-chart.yaml
+  - path: examples/fluxcd-memory-chart.yaml
+  - path: examples/fluxcd-chatbot-api-chart.yaml
+  - path: examples/fluxcd-memory-api-chart.yaml
+  - path: examples/fluxcd-agent-chart.yaml
+  - path: examples/fluxcd-agent-api-chart.yaml
+  - path: examples/fluxcd-admin-api-chart.yaml
+  - path: examples/fluxcd-ollama-chart.yaml
+  - path: examples/fluxcd-memory-distiller-chart.yaml
+  - path: examples/fluxcd-portal-chart.yaml
+  - path: examples/fluxcd-portal-api-chart.yaml
+  - path: examples/fluxcd-web-chart.yaml
+  - path: examples/fluxcd-apidocs-api-chart.yaml

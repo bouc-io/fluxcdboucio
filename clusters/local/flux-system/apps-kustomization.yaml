@@ -1,0 +1,97 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: local-apps
+  namespace: flux-system
+spec:
+  interval: 1m
+  path: "./clusters/local/apps"
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  prune: true
+  timeout: 10m
+  # THIS IS THE KEY - Apps depend on config
+  dependsOn:
+    - name: local-config
+    # Apps consume ESO-managed Secrets (e.g. boucio-chatbot-db-secret); this
+    # Kustomization has wait:true, so apps start only after the secrets are synced.
+    - name: local-eso-externalsecrets
+
+  # Post-build variable substitution
+  postBuild:
+    substitute:
+      CONFIG_TIMESTAMP: "$(date +%Y%m%d-%H%M%S)"
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars
+        optional: true
+      - kind: ConfigMap
+        name: ollama-base-values
+        optional: true
+      - kind: ConfigMap
+        name: ollama-level-values
+        optional: true
+      - kind: ConfigMap
+        name: chatbot-ui-base-values
+        optional: true
+      - kind: ConfigMap
+        name: chatbot-ui-level-values
+        optional: true
+      - kind: ConfigMap
+        name: admin-ui-base-values
+        optional: true
+      - kind: ConfigMap
+        name: admin-ui-level-values
+        optional: true
+      - kind: ConfigMap
+        name: chatbot-api-base-values
+        optional: true
+      - kind: ConfigMap
+        name: chatbot-api-level-values
+        optional: true
+      - kind: ConfigMap
+        name: memory-api-base-values
+        optional: true
+      - kind: ConfigMap
+        name: memory-api-level-values
+        optional: true
+      - kind: ConfigMap
+        name: memory-distiller-base-values
+        optional: true
+      - kind: ConfigMap
+        name: memory-distiller-level-values
+        optional: true
+      - kind: ConfigMap
+        name: agent-api-base-values
+        optional: true
+      - kind: ConfigMap
+        name: agent-api-level-values
+        optional: true
+      - kind: ConfigMap
+        name: admin-api-base-values
+        optional: true
+      - kind: ConfigMap
+        name: admin-api-level-values
+        optional: true
+      - kind: ConfigMap
+        name: agent-ui-base-values
+        optional: true
+      - kind: ConfigMap
+        name: agent-ui-level-values
+        optional: true
+      - kind: ConfigMap
+        name: metrics-server-base-values
+        optional: true
+      - kind: ConfigMap
+        name: web-ui-base-values
+        optional: true
+      - kind: ConfigMap
+        name: web-ui-level-values
+        optional: true
+      - kind: ConfigMap
+        name: apidocs-api-base-values
+        optional: true
+      - kind: ConfigMap
+        name: apidocs-api-level-values
+        optional: true

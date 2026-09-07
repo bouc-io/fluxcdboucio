@@ -1,0 +1,16 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: oauth2-proxy-helmrelease
+  namespace: oauth2-proxy
+spec:
+  interval: 240m
+  valuesFrom:
+    - kind: ConfigMap
+      name: oauth2-proxy-base-values
+      valuesKey: base.values.yaml
+      optional: false
+    - kind: ConfigMap
+      name: oauth2-proxy-level-values
+      valuesKey: snbx.values.yaml
+      optional: false

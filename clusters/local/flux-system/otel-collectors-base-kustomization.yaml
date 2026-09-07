@@ -1,0 +1,29 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: local-otel-collectors
+  namespace: flux-system
+spec:
+  interval: 5m
+  path: ./clusters/components/opentelemetry/collectors/base
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  prune: true
+  wait: true
+  timeout: 5m
+  dependsOn:
+    - name: local-infra
+  # Resolve ${ENVIRONMENT_ID} (and any other cluster-vars keys) inside the collector manifest.
+  # Runtime-expanded collector vars (e.g. ${K8S_NODE_NAME}) are escaped as $${...} in the CR so
+  # Flux leaves them untouched for the collector to expand at runtime.
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars
+        optional: true
+  healthChecks:
+    - apiVersion: opentelemetry.io/v1beta1
+      kind: OpenTelemetryCollector
+      name: boucio-otel-collector
+      namespace: opentelemetry

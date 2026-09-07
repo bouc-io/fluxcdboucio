@@ -1,0 +1,83 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: chatbot-api-chart-img-repo
+  namespace: flux-system
+spec:
+  interval: 240m
+  image: ${IMAGE_REGISTRY:=ghcr.io/bouc-io}/application/chatbot/chatbot-api-server
+  provider: generic
+  secretRef:
+    name: ${REGISTRY_SECRET:=registry-credentials}
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: chatbot-api-chart-imgpolicy
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: chatbot-api-chart-img-repo
+  policy:
+    semver:
+      range: "${IMAGE_TAG_RANGE:=x.x.x}" # Override IMAGE_TAG_RANGE in cluster-vars to pin (e.g. 1.0.x)
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: chatbot-api-chart-helmrelease
+  namespace: default
+spec:
+  interval: 240m
+  chart:
+    spec:
+      chart: chatbot-api-chart
+      version: "0.x.x"
+      sourceRef:
+        kind: HelmRepository
+        name: boucio-charts
+        namespace: default
+      interval: 240m
+  valuesFrom:
+    - kind: ConfigMap
+      name: chatbot-api-chart-values
+      valuesKey: values.yaml
+  releaseName: chatbot-api-chart
+  install:
+    crds: Create
+    disableWait: true
+  upgrade:
+    crds: CreateReplace
+    disableWait: true
+  values:
+    image:
+      registry: ${IMAGE_REGISTRY:=ghcr.io/bouc-io}
+      imagePullPolicy: IfNotPresent
+      # Dynamic tag to be updated by Image Automation
+      tag: "1.0.1686424642" # {"$imagepolicy": "flux-system:chatbot-api-chart-imgpolicy:tag"}
+    replicaCount: 1
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: chatbot-api-chart-auto-imgupdate
+  namespace: flux-system
+spec:
+  interval: 240m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: master
+    commit:
+      author:
+        email: martin.cote@gmail.com
+        name: "Martin Cote"
+      messageTemplate: "{{range .Changed.Changes}}{{print .OldValue}} -> {{println .NewValue}}{{end}}"
+    push:
+      branch: master
+  update:
+    path: ../clusters/base/apps/examples
+    strategy: Setters

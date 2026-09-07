@@ -1,0 +1,84 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: ollama-img-repo
+  namespace: flux-system
+spec:
+  interval: 240m
+  image: docker.io/ollama/ollama
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: ollama-imgpolicy
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: ollama-img-repo
+  policy:
+    semver:
+      range: "0.x.x" # Adjust based on your versioning scheme
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: ollama-chart-repo
+  namespace: default
+spec:
+  interval: 240m
+  url: https://helm.otwld.com/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ollama-chart-helmrelease
+  namespace: default
+spec:
+  interval: 240m
+  chart:
+    spec:
+      chart: ollama
+      version: "1.x.x"
+      sourceRef:
+        kind: HelmRepository
+        name: ollama-chart-repo
+        namespace: default
+      interval: 240m
+  valuesFrom:
+    - kind: ConfigMap
+      name: ollama-chart-values
+      valuesKey: values.yaml
+  releaseName: ollama-chart
+  install:
+    crds: Create
+    disableWait: true
+  upgrade:
+    crds: CreateReplace
+    disableWait: true
+  values:
+    replicaCount: 1
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: ollama-auto-imgupdate
+  namespace: flux-system
+spec:
+  interval: 240m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: master
+    commit:
+      author:
+        name: "Martin Cote"
+        email: martin.cote@gmail.com
+      messageTemplate: "{{range .Changed.Changes}}{{print .OldValue}} -> {{println .NewValue}}{{end}}"
+    push:
+      branch: master
+  update:
+    path: ./clusters/base/apps/examples
+    strategy: Setters

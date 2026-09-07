@@ -1,0 +1,45 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ollama-chart-helmrelease
+  namespace: default
+  annotations:
+    config-updated: "${CONFIG_TIMESTAMP}"
+spec:
+  interval: 240m
+  valuesFrom:
+    - kind: ConfigMap
+      name: ollama-base-values
+      valuesKey: base.values.yaml
+    - kind: ConfigMap
+      name: ollama-level-values
+      valuesKey: snbx.values.yaml
+  values:
+    replicaCount: 1 # Single replica for local
+    image:
+      tag: "0.33.3" # {"$imagepolicy": "flux-system:ollama-imgpolicy:tag"}
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: ollama-auto-imgupdate
+  namespace: flux-system
+spec:
+  interval: 240m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: master
+    commit:
+      author:
+        email: martin.cote@gmail.com
+        name: "Martin Cote"
+      messageTemplate: "{{range .Changed.Changes}}{{print .OldValue}} -> {{println .NewValue}}{{end}}"
+    push:
+      branch: master
+  update:
+    path: ./clusters/sandbox/apps/examples
+    strategy: Setters

@@ -1,0 +1,22 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: local-istio-base
+  namespace: flux-system
+spec:
+  interval: 5m
+  path: ./clusters/components/istio/base
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  prune: true
+  wait: true
+  timeout: 5m
+  dependsOn:
+    - name: local-infra
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v2beta1
+      kind: HelmRelease
+      name: istiod
+      namespace: istio-system
+

@@ -1,0 +1,49 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: stakater
+  namespace: reloader
+spec:
+  interval: 24h
+  url: https://stakater.github.io/stakater-charts
+---
+# Reloader restarts a workload when a Secret or ConfigMap it references changes.
+# External Secrets rewrites boucio-<svc>-db-secret on rotation, but a secretKeyRef
+# env var is resolved once at pod start and never refreshed, so without this the
+# app keeps using the old DATABASE_URL until something else restarts it.
+#
+# Values are inline: there is nothing environment-specific here, so this add-on
+# needs no component repo or per-env ConfigMap (same approach as cert-manager).
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: reloader
+  namespace: reloader
+spec:
+  interval: 240m
+  chart:
+    spec:
+      chart: reloader
+      version: "2.x"
+      sourceRef:
+        kind: HelmRepository
+        name: stakater
+        namespace: reloader
+      interval: 12h
+  install:
+    createNamespace: false
+  targetNamespace: reloader
+  values:
+    reloader:
+      # Watch every namespace; workloads opt in with
+      # reloader.stakater.com/auto: "true" on the Deployment.
+      watchGlobally: true
+      reloadStrategy: annotations
+      deployment:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 128Mi

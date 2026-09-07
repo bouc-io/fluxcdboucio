@@ -1,0 +1,14 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kiali-helmrelease
+  namespace: kiali
+spec:
+  interval: 60m # Shorter interval for local development
+  valuesFrom:
+    - kind: ConfigMap
+      name: kiali-base-values
+      valuesKey: base.values.yaml
+    - kind: ConfigMap
+      name: kiali-level-values
+      valuesKey: lcl.values.yaml

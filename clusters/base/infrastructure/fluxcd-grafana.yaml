@@ -1,0 +1,46 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: grafana-helmrepo
+  namespace: grafana
+spec:
+  url: https://grafana.github.io/helm-charts
+  interval: 30m
+  timeout: 1m
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana-helmrelease
+  namespace: grafana
+spec:
+  interval: 30m
+  releaseName: grafana
+  chart:
+    spec:
+      chart: grafana
+      # Verify/pin against the chart version the values were authored for before first reconcile.
+      version: "8.x.x"
+      sourceRef:
+        kind: HelmRepository
+        name: grafana-helmrepo
+        namespace: grafana
+      interval: 30m
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  targetNamespace: grafana
+  # Placeholder valuesKey; the per-environment patch overrides valuesFrom with the real keys
+  # (base.values.yaml + lcl.values.yaml / snbx.values.yaml).
+  valuesFrom:
+    - kind: ConfigMap
+      name: grafana-base-values
+      valuesKey: values.yaml
+    - kind: ConfigMap
+      name: grafana-level-values
+      valuesKey: values.yaml

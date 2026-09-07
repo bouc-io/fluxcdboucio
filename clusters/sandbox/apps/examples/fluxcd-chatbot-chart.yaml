@@ -1,0 +1,39 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: chatbot-chart-helmrelease
+  namespace: default
+  annotations:
+    config-updated: "${CONFIG_TIMESTAMP}"
+spec:
+  interval: 240m
+  valuesFrom:
+    - kind: ConfigMap
+      name: chatbot-ui-base-values
+      valuesKey: base.values.yaml
+    - kind: ConfigMap
+      name: chatbot-ui-level-values
+      valuesKey: snbx.values.yaml
+  values:
+    image:
+      registry: ${IMAGE_REGISTRY:=ghcr.io/bouc-io}
+      imagePullPolicy: IfNotPresent
+      # Dynamic tag to be updated by Image Automation
+      tag: "1.0.2811374410" # {"$imagepolicy": "flux-system:chatbot-chart-imgpolicy:tag"}
+    imagePullSecrets:
+      - name: ${REGISTRY_SECRET:=registry-credentials}
+    replicaCount: 1 # Single replica for local
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: chatbot-chart-auto-imgupdate
+  namespace: flux-system
+spec:
+  interval: 240m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  update:
+    path: ./clusters/sandbox/apps/examples
+    strategy: Setters

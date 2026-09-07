@@ -1,0 +1,284 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespaces.yaml
+
+# Extract ALL your configMapGenerator from the main kustomization
+configMapGenerator:
+  - name: ollama-base-values
+    namespace: default
+    files:
+      - base.values.yaml=../../components/ollama/base.values.yaml
+  - name: ollama-level-values
+    namespace: default
+    files:
+      - lcl.values.yaml=../../components/ollama/lcl.values.yaml
+  - name: chatbot-ui-base-values
+    namespace: default
+    files:
+      - base.values.yaml=../../components/chatbot-ui/base.values.yaml
+  - name: chatbot-ui-level-values
+    namespace: default
+    files:
+      - lcl.values.yaml=../../components/chatbot-ui/lcl.values.yaml
+  - name: admin-ui-base-values
+    namespace: default
+    files:
+      - base.values.yaml=../../components/admin-ui/base.values.yaml
+  - name: admin-ui-level-values
+    namespace: default
+    files:
+      - lcl.values.yaml=../../components/admin-ui/lcl.values.yaml
+  - name: memory-ui-base-values
+    namespace: default
+    files:
+      - base.values.yaml=../../components/memory-ui/base.values.yaml
+  - name: memory-ui-level-values
+    namespace: default
+    files:
+      - lcl.values.yaml=../../components/memory-ui/lcl.values.yaml
+  - name: chatbot-api-base-values
+    namespace: default
+    files:
+      - base.values.yaml=../../components/chatbot-api/base.values.yaml
+  - name: chatbot-api-level-values
+    namespace: default
+    files:
+      - lcl.values.yaml=../../components/chatbot-api/lcl.values.yaml
+  - name: memory-api-base-values
+    namespace: default
+    files:
+      - base.values.yaml=../../components/memory-api/base.values.yaml
+  - name: memory-api-level-values
+    namespace: default
+    files:
+      - lcl.values.yaml=../../components/memory-api/lcl.values.yaml
+  - name: memory-distiller-base-values
+    namespace: default
+    files:
+      - base.values.yaml=../../components/memory-distiller/base.values.yaml
+  - name: memory-distiller-level-values
+    namespace: default
+    files:
+      - lcl.values.yaml=../../components/memory-distiller/lcl.values.yaml
+  - name: agent-api-base-values
+    namespace: default
+    files:
+      - base.values.yaml=../../components/agent-api/base.values.yaml
+  - name: agent-api-level-values
+    namespace: default
+    files:
+      - lcl.values.yaml=../../components/agent-api/lcl.values.yaml
+  - name: admin-api-base-values
+    namespace: default
+    files:
+      - base.values.yaml=../../components/admin-api/base.values.yaml
+  - name: admin-api-level-values
+    namespace: default
+    files:
+      - lcl.values.yaml=../../components/admin-api/lcl.values.yaml
+  - name: agent-ui-base-values
+    namespace: default
+    files:
+      - base.values.yaml=../../components/agent-ui/base.values.yaml
+  - name: agent-ui-level-values
+    namespace: default
+    files:
+      - lcl.values.yaml=../../components/agent-ui/lcl.values.yaml
+  - name: metrics-server-base-values
+    namespace: metrics-server
+    files:
+      - base.values.yaml=../../components/metrics-server/base.values.yaml
+  - name: datadog-base-values
+    namespace: datadog
+    files:
+      - base.values.yaml=../../components/datadog/base.values.yaml
+  - name: datadog-level-values
+    namespace: datadog
+    files:
+      - lcl.values.yaml=../../components/datadog/lcl.values.yaml
+  - name: opentelemetry-base-values
+    namespace: opentelemetry
+    files:
+      - base.values.yaml=../../components/opentelemetry/base.values.yaml
+  - name: opentelemetry-level-values
+    namespace: opentelemetry
+    files:
+      - lcl.values.yaml=../../components/opentelemetry/lcl.values.yaml
+  - name: keycloak-users-realm
+    namespace: keycloak
+    files:
+      - users-realm.json=../../components/keycloak/local/local.users-realm-export.version-17.json
+    #options:
+    #  annotations:
+    #    kustomize.toolkit.fluxcd.io/substitute: "disabled"
+  - name: keycloak-base-values
+    namespace: keycloak
+    files:
+      - base.values.yaml=../../components/keycloak/base.values.yaml
+  - name: keycloak-level-values
+    namespace: keycloak
+    files:
+      - lcl.values.yaml=../../components/keycloak/lcl.values.yaml
+  - name: oauth2-proxy-base-values
+    namespace: oauth2-proxy
+    files:
+      - base.values.yaml=../../components/oauth2-proxy/base.values.yaml
+  - name: oauth2-proxy-level-values
+    namespace: oauth2-proxy
+    files:
+      - lcl.values.yaml=../../components/oauth2-proxy/lcl.values.yaml
+  - name: external-dns-base-values
+    namespace: external-dns
+    files:
+      - base.values.yaml=../../components/external-dns/base.values.yaml
+  - name: external-dns-level-values
+    namespace: external-dns
+    files:
+      - lcl.values.yaml=../../components/external-dns/lcl.values.yaml
+  - name: external-secrets-base-values
+    namespace: external-secrets
+    files:
+      - base.values.yaml=../../components/external-secrets/base.values.yaml
+  - name: external-secrets-level-values
+    namespace: external-secrets
+    files:
+      - lcl.values.yaml=../../components/external-secrets/lcl.values.yaml
+  - name: kiali-base-values
+    namespace: kiali
+    files:
+      - base.values.yaml=../../components/kiali/base.values.yaml
+  - name: kiali-level-values
+    namespace: kiali
+    files:
+      - lcl.values.yaml=../../components/kiali/lcl.values.yaml
+  - name: prometheus-base-values
+    namespace: prometheus
+    files:
+      - base.values.yaml=../../components/prometheus/base.values.yaml
+  - name: prometheus-level-values
+    namespace: prometheus
+    files:
+      - lcl.values.yaml=../../components/prometheus/lcl.values.yaml
+  - name: grafana-base-values
+    namespace: grafana
+    files:
+      - base.values.yaml=../../components/grafana/base.values.yaml
+  - name: grafana-level-values
+    namespace: grafana
+    files:
+      - lcl.values.yaml=../../components/grafana/lcl.values.yaml
+  # Grafana dashboards: ConfigMaps imported by the Grafana sidecar (label grafana_dashboard).
+  # substitute:disabled excludes them from Flux postBuild — dashboard JSON is full of ${...}
+  # Grafana template vars (${datasource}, ${DS_PROMETHEUS}, $__rate_interval, …). Same approach
+  # as keycloak-users-realm. Grouped so no ConfigMap nears the ~1 MB object limit.
+  - name: grafana-dashboards-k8s-views
+    namespace: grafana
+    options:
+      disableNameSuffixHash: true
+      labels:
+        grafana_dashboard: "1"
+      annotations:
+        kustomize.toolkit.fluxcd.io/substitute: "disabled"
+    files:
+      - k8s-views-global.json=../../components/grafana/dashboards/base/k8s-views-global.json
+      - k8s-views-namespaces.json=../../components/grafana/dashboards/base/k8s-views-namespaces.json
+      - k8s-views-nodes.json=../../components/grafana/dashboards/base/k8s-views-nodes.json
+      - k8s-views-pods.json=../../components/grafana/dashboards/base/k8s-views-pods.json
+  - name: grafana-dashboards-k8s-addons
+    namespace: grafana
+    options:
+      disableNameSuffixHash: true
+      labels:
+        grafana_dashboard: "1"
+      annotations:
+        kustomize.toolkit.fluxcd.io/substitute: "disabled"
+    files:
+      - k8s-addons-prometheus.json=../../components/grafana/dashboards/base/k8s-addons-prometheus.json
+      - k8s-addons-trivy-operator.json=../../components/grafana/dashboards/base/k8s-addons-trivy-operator.json
+  - name: grafana-dashboards-k8s-system
+    namespace: grafana
+    options:
+      disableNameSuffixHash: true
+      labels:
+        grafana_dashboard: "1"
+      annotations:
+        kustomize.toolkit.fluxcd.io/substitute: "disabled"
+    files:
+      - k8s-system-api-server.json=../../components/grafana/dashboards/base/k8s-system-api-server.json
+      - k8s-system-coredns.json=../../components/grafana/dashboards/base/k8s-system-coredns.json
+  - name: grafana-dashboards-istio
+    namespace: grafana
+    options:
+      disableNameSuffixHash: true
+      labels:
+        grafana_dashboard: "1"
+      annotations:
+        kustomize.toolkit.fluxcd.io/substitute: "disabled"
+    files:
+      - 7636_rev309.json=../../components/grafana/dashboards/base/7636_rev309.json
+      - 7639_rev310.json=../../components/grafana/dashboards/base/7639_rev310.json
+      - 7645_rev309.json=../../components/grafana/dashboards/base/7645_rev309.json
+      - 11829_rev309.json=../../components/grafana/dashboards/base/11829_rev309.json
+  - name: grafana-dashboards-extra
+    namespace: grafana
+    options:
+      disableNameSuffixHash: true
+      labels:
+        grafana_dashboard: "1"
+      annotations:
+        kustomize.toolkit.fluxcd.io/substitute: "disabled"
+    files:
+      - 12740_rev1.json=../../components/grafana/dashboards/base/12740_rev1.json
+  # App-observability dashboards: business metrics (agent_*/distiller_*, direct-scrape)
+  # and OTLP-routed runtime/HTTP (otel_*). Source JSON lives in the grafana component.
+  - name: grafana-dashboards-app
+    namespace: grafana
+    options:
+      disableNameSuffixHash: true
+      labels:
+        grafana_dashboard: "1"
+      annotations:
+        kustomize.toolkit.fluxcd.io/substitute: "disabled"
+    files:
+      - boucio-app-business.json=../../components/grafana/dashboards/base/boucio-app-business.json
+      - boucio-app-runtime.json=../../components/grafana/dashboards/base/boucio-app-runtime.json
+  - name: portal-ui-base-values
+    namespace: default
+    files:
+      - base.values.yaml=../../components/portal-ui/base.values.yaml
+  - name: portal-ui-level-values
+    namespace: default
+    files:
+      - lcl.values.yaml=../../components/portal-ui/lcl.values.yaml
+  - name: portal-api-base-values
+    namespace: default
+    files:
+      - base.values.yaml=../../components/portal-api/base.values.yaml
+  - name: portal-api-level-values
+    namespace: default
+    files:
+      - lcl.values.yaml=../../components/portal-api/lcl.values.yaml
+  - name: web-ui-base-values
+    namespace: default
+    files:
+      - base.values.yaml=../../components/web-ui/base.values.yaml
+  - name: web-ui-level-values
+    namespace: default
+    files:
+      - lcl.values.yaml=../../components/web-ui/lcl.values.yaml
+  - name: apidocs-api-base-values
+    namespace: default
+    files:
+      - base.values.yaml=../../components/apidocs-api/base.values.yaml
+  - name: apidocs-api-level-values
+    namespace: default
+    files:
+      - lcl.values.yaml=../../components/apidocs-api/lcl.values.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+commonLabels:
+  config-managed-by: flux

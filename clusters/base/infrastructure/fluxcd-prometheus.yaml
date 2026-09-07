@@ -1,0 +1,43 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: prometheus-community-helmrepo
+  namespace: prometheus
+spec:
+  url: https://prometheus-community.github.io/helm-charts
+  interval: 30m
+  timeout: 1m
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: prometheus-helmrelease
+  namespace: prometheus
+spec:
+  interval: 30m
+  releaseName: prometheus
+  chart:
+    spec:
+      chart: prometheus
+      version: "28.x.x"
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community-helmrepo
+        namespace: prometheus
+      interval: 30m
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  targetNamespace: prometheus
+  valuesFrom:
+    - kind: ConfigMap
+      name: prometheus-base-values
+      valuesKey: base.values.yaml
+    - kind: ConfigMap
+      name: prometheus-level-values
+      valuesKey: values.yaml

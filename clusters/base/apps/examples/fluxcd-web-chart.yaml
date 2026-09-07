@@ -1,0 +1,86 @@
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageRepository
+metadata:
+  name: web-chart-img-repo
+  namespace: flux-system
+spec:
+  interval: 240m
+  image: ${IMAGE_REGISTRY:=ghcr.io/bouc-io}/application/web/web-mirror-ui
+  provider: generic
+  secretRef:
+    name: ${REGISTRY_SECRET:=registry-credentials}
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImagePolicy
+metadata:
+  name: web-chart-imgpolicy
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: web-chart-img-repo
+  policy:
+    semver:
+      range: "${IMAGE_TAG_RANGE:=x.x.x}" # Override IMAGE_TAG_RANGE in cluster-vars to pin (e.g. 1.0.x)
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: web-chart-helmrelease
+  namespace: default
+spec:
+  interval: 240m
+  chart:
+    spec:
+      chart: web-chart
+      version: "0.x.x"
+      sourceRef:
+        kind: HelmRepository
+        name: boucio-charts
+        namespace: default
+      interval: 240m
+  valuesFrom:
+    - kind: ConfigMap
+      name: web-ui-base-values
+      valuesKey: base.values.yaml
+    - kind: ConfigMap
+      name: web-ui-level-values
+      valuesKey: values.yaml
+  releaseName: web-chart
+  install:
+    crds: Create
+    disableWait: true
+  upgrade:
+    crds: CreateReplace
+    disableWait: true
+  values:
+    image:
+      registry: ${IMAGE_REGISTRY:=ghcr.io/bouc-io}
+      imagePullPolicy: IfNotPresent
+      # Dynamic tag to be updated by Image Automation
+      tag: "1.0.0" # {"$imagepolicy": "flux-system:web-chart-imgpolicy:tag"}
+    replicaCount: 1
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: web-chart-auto-imgupdate
+  namespace: flux-system
+spec:
+  interval: 240m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: master
+    commit:
+      author:
+        email: martin.cote@gmail.com
+        name: "Martin Cote"
+      messageTemplate: "{{range .Changed.Changes}}{{print .OldValue}} -> {{println .NewValue}}{{end}}"
+    push:
+      branch: master
+  update:
+    path: ./clusters/base/apps/examples
+    strategy: Setters

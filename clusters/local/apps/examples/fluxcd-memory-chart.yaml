@@ -1,0 +1,39 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: memory-chart-helmrelease
+  namespace: default
+  annotations:
+    config-updated: "${CONFIG_TIMESTAMP}"
+spec:
+  interval: 1m # Shorter interval for local development
+  valuesFrom:
+    - kind: ConfigMap
+      name: memory-ui-base-values
+      valuesKey: base.values.yaml
+    - kind: ConfigMap
+      name: memory-ui-level-values
+      valuesKey: lcl.values.yaml
+  values:
+    image:
+      registry: ${IMAGE_REGISTRY:=ghcr.io/bouc-io}
+      imagePullPolicy: IfNotPresent
+      # Dynamic tag to be updated by Image Automation
+      tag: "1.0.2811375457" # {"$imagepolicy": "flux-system:memory-chart-imgpolicy:tag"}
+    imagePullSecrets:
+      - name: ${REGISTRY_SECRET:=registry-credentials}
+    replicaCount: 1 # Single replica for local
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: memory-chart-auto-imgupdate
+  namespace: flux-system
+spec:
+  interval: 240m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  update:
+    path: ./clusters/local/apps/examples
+    strategy: Setters

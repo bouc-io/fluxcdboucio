@@ -1,0 +1,30 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: local-istio-overlays
+  namespace: flux-system
+spec:
+  interval: 5m
+  path: ./clusters/components/istio/local
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  prune: true
+  wait: true
+  timeout: 5m
+  dependsOn:
+    - name: local-infra
+    - name: local-istio-base
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v2beta1
+      kind: HelmRelease
+      name: istio-ingressgateway
+      namespace: istio-system
+
+  # Post-build variable substitution
+  postBuild:
+    substitute:
+      CONFIG_TIMESTAMP: "$(date +%Y%m%d-%H%M%S)"
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars
