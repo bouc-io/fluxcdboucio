@@ -1,0 +1,22 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: sandbox-cert-issuers
+  namespace: flux-system
+spec:
+  interval: 5m
+  path: ./clusters/components/cert-manager/issuers/sandbox
+  prune: true
+  wait: true
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  dependsOn:
+    - name: sandbox-infra
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: cert-manager
+      namespace: cert-manager
+

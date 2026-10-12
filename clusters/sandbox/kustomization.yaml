@@ -1,0 +1,106 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - flux-system/gotk-components.yaml
+  - flux-system/gotk-sync.yaml
+  - flux-system/config-kustomization.yaml
+  - flux-system/apps-kustomization.yaml
+  - flux-system/infra-kustomization.yaml
+  - flux-system/cert-issuers-kustomization.yaml
+  - flux-system/cert-certificates-kustomization.yaml
+  - flux-system/eso-externalsecrets-kustomization.yaml
+  - flux-system/eso-generators-kustomization.yaml
+  - flux-system/eso-infra-externalsecrets-kustomization.yaml
+  - flux-system/eso-stores-kustomization.yaml
+  - flux-system/istio-base-kustomization.yaml
+  - flux-system/istio-sandbox-kustomization.yaml
+  - flux-system/otel-collectors-base-kustomization.yaml
+#   - ../base/infrastructure/fluxcd-cert-manager.yaml
+#   - ../base/infrastructure/fluxcd-keycloak.yaml
+#   - ../base/infrastructure/fluxcd-oauth2-proxy.yaml
+#   - ../base/infrastructure/fluxcd-metrics-server.yaml
+#   - ../base/infrastructure/fluxcd-istio.yaml
+#   - ../base/apps/examples/fluxcd-defaultns-istioon.yaml
+#   - ../base/apps/examples/fluxcd-static-web.yaml
+#   - ../base/apps/examples/fluxcd-api-chart.yaml
+#   - ../base/apps/examples/fluxcd-api-java-chart.yaml
+#   - ../base/apps/examples/fluxcd-txn-web-chart.yaml
+#   - ../base/apps/examples/fluxcd-chatbot-chart.yaml
+#   - ../base/apps/examples/fluxcd-chatbot-api-chart.yaml
+#   - ../base/apps/examples/fluxcd-ollama-chart.yaml
+
+# patches:
+#   - path: infrastructure/fluxcd-oauth2-proxy.yaml
+#   - path: infrastructure/fluxcd-keycloak.yaml
+#   - path: apps/examples/fluxcd-static-web.yaml
+#   - path: apps/examples/fluxcd-api-java-chart.yaml
+#   - path: apps/examples/fluxcd-api-chart.yaml
+#   - path: apps/examples/fluxcd-txn-web-chart.yaml
+#   - path: apps/examples/fluxcd-chatbot-chart.yaml
+#   - path: apps/examples/fluxcd-chatbot-api-chart.yaml
+#   - path: apps/examples/fluxcd-ollama-chart.yaml
+
+# configMapGenerator:
+#   - name: static-web-base-values
+#     namespace: default
+#     files:
+#       - base.values.yaml=../components/static-website/base.values.yaml
+#   - name: static-web-level-values
+#     namespace: default
+#     files:
+#       - snbx.values.yaml=../components/static-website/snbx.values.yaml
+#   - name: txn-web-base-values
+#     namespace: default
+#     files:
+#       - base.values.yaml=../components/txn-website/base.values.yaml
+#   - name: txn-web-level-values
+#     namespace: default
+#     files:
+#       - snbx.values.yaml=../components/txn-website/snbx.values.yaml
+#   - name: ollama-base-values
+#     namespace: default
+#     files:
+#       - base.values.yaml=../components/ollama/base.values.yaml
+#   - name: ollama-level-values
+#     namespace: default
+#     files:
+#       - snbx.values.yaml=../components/ollama/snbx.values.yaml
+#   - name: chatbot-ui-base-values
+#     namespace: default
+#     files:
+#       - base.values.yaml=../components/chatbot-ui/base.values.yaml
+#   - name: chatbot-ui-level-values
+#     namespace: default
+#     files:
+#       - snbx.values.yaml=../components/chatbot-ui/snbx.values.yaml
+#   - name: chatbot-api-base-values
+#     namespace: default
+#     files:
+#       - base.values.yaml=../components/chatbot-api/base.values.yaml
+#   - name: chatbot-api-level-values
+#     namespace: default
+#     files:
+#       - snbx.values.yaml=../components/chatbot-api/snbx.values.yaml
+#   - name: api-java-base-values
+#     namespace: default
+#     files:
+#       - base.values.yaml=../components/api-java/base.values.yaml
+#   - name: api-java-level-values
+#     namespace: default
+#     files:
+#       - snbx.values.yaml=../components/api-java/snbx.values.yaml
+#   - name: api-node-base-values
+#     namespace: default
+#     files:
+#       - base.values.yaml=../components/api-node/base.values.yaml
+#   - name: api-node-level-values
+#     namespace: default
+#     files:
+#       - snbx.values.yaml=../components/api-node/snbx.values.yaml
+#   - name: metrics-server-base-values
+#     namespace: metrics-server
+#     files:
+#       - base.values.yaml=../components/metrics-server/base.values.yaml
+
+# generatorOptions:
+#   disableNameSuffixHash: true

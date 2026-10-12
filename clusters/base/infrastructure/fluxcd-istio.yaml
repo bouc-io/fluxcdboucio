@@ -1,0 +1,155 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: istio
+  namespace: istio-system
+spec:
+  interval: 24h
+  ## Deprecated - Refer to https://istio.io/latest/blog/2026/retirement-of-gcp/
+  #url: https://istio-release.storage.googleapis.com/charts
+  url: https://blob.istio.io/istio-release/charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: istio-base
+  namespace: istio-system
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: base
+      sourceRef:
+        kind: HelmRepository
+        name: istio
+        namespace: istio-system
+      interval: 1m
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: istiod
+  namespace: istio-system
+spec:
+  interval: 5m
+  dependsOn:
+    - name: istio-base
+      namespace: istio-system
+  chart:
+    spec:
+      chart: istiod
+      sourceRef:
+        kind: HelmRepository
+        name: istio
+        namespace: istio-system
+      interval: 1m
+  values:
+    meshConfig:
+      accessLogFile: /dev/stdout
+      defaultConfig:
+        discoveryAddress: istiod.istio-system.svc:15012
+        proxyMetadata: {}
+        tracing:
+          zipkin:
+            address: zipkin.istio-system:9411
+      enablePrometheusMerge: true
+      rootNamespace: istio-system
+      enableTracing: false
+      outboundTrafficPolicy:
+        mode: REGISTRY_ONLY
+      trustDomain: cluster.local
+      extensionProviders:
+        - name: "oauth2-proxy"
+          envoyExtAuthzHttp:
+            service: "oauth2-proxy-rel.oauth2-proxy.svc.cluster.local"
+            port: "80" # The default port used by oauth2-proxy.
+            includeRequestHeadersInCheck: [
+                "authorization",
+                "cookie",
+                "x-ext-authz",
+                "x-forwarded-access-token",
+                "x-forwarded-user",
+                "x-forwarded-email",
+                "x-forwarded-proto",
+                "proxy-authorization",
+                "user-agent",
+                "x-forwarded-host",
+                "from",
+                "x-forwarded-for",
+                "x-forwarded-uri",
+                "x-auth-request-redirect",
+                "accept",
+              ] # headers sent to the oauth2-proxy in the check request.
+            headersToUpstreamOnAllow: [
+                "authorization",
+                "path",
+                "cookie",
+                "x-auth-request-user",
+                "x-auth-request-email",
+                "x-auth-request-access-token",
+                "x-forwarded-access-token",
+              ] # headers sent to backend application when request is allowed.
+            headersToDownstreamOnAllow: ["content-type", "set-cookie"] # headers sent back to the client when request is allowed.
+            headersToDownstreamOnDeny: ["content-type", "set-cookie"] # headers sent back to the client when request is denied.
+    pilot:
+      autoscaleEnabled: false
+      replicaCount: 1
+      podDisruptionBudget:
+        minAvailable: 0%
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: istio-ingressgateway
+  namespace: istio-system
+spec:
+  interval: 5m
+  dependsOn:
+    - name: istio-base
+      namespace: istio-system
+    - name: istiod
+      namespace: istio-system
+  chart:
+    spec:
+      chart: gateway
+      sourceRef:
+        kind: HelmRepository
+        name: istio
+        namespace: istio-system
+      interval: 1m
+  values:
+    name: istio-ingressgateway
+    #autoscaleEnabled: false ## TOFIX: Deprecated in Istio 1.27.0??
+    replicaCount: 1
+    podDisruptionBudget:
+      minAvailable: 0%
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: istio-egressgateway
+  namespace: istio-system
+spec:
+  interval: 5m
+  dependsOn:
+    - name: istio-base
+      namespace: istio-system
+    - name: istiod
+      namespace: istio-system
+  chart:
+    spec:
+      chart: gateway
+      sourceRef:
+        kind: HelmRepository
+        name: istio
+        namespace: istio-system
+      interval: 1m
+  values:
+    name: istio-egressgateway
+    #autoscaleEnabled: false ## TOFIX: Deprecated in Istio 1.27.0??
+    replicaCount: 1
+    podDisruptionBudget:
+      minAvailable: 0%
+    service:
+      type: ClusterIP

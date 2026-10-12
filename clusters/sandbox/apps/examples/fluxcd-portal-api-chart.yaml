@@ -1,0 +1,39 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: portal-api-chart-helmrelease
+  namespace: default
+  annotations:
+    config-updated: "${CONFIG_TIMESTAMP}"
+spec:
+  interval: 240m
+  valuesFrom:
+    - kind: ConfigMap
+      name: portal-api-base-values
+      valuesKey: base.values.yaml
+    - kind: ConfigMap
+      name: portal-api-level-values
+      valuesKey: snbx.values.yaml
+  values:
+    image:
+      registry: ${IMAGE_REGISTRY:=ghcr.io/bouc-io}
+      imagePullPolicy: IfNotPresent
+      # Dynamic tag to be updated by Image Automation
+      tag: "1.0.2818713990" # {"$imagepolicy": "flux-system:portal-api-chart-imgpolicy:tag"}
+    imagePullSecrets:
+      - name: ${REGISTRY_SECRET:=registry-credentials}
+    replicaCount: 1 # Single replica for local
+---
+apiVersion: image.toolkit.fluxcd.io/v1
+kind: ImageUpdateAutomation
+metadata:
+  name: portal-api-chart-auto-imgupdate
+  namespace: flux-system
+spec:
+  interval: 240m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  update:
+    path: ./clusters/sandbox/apps/examples
+    strategy: Setters

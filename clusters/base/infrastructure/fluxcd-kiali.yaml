@@ -1,0 +1,42 @@
+---
+#apiVersion: source.toolkit.fluxcd.io/v1
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: kiali-helmrepo
+  namespace: kiali
+spec:
+  interval: 240m
+  url: https://kiali.org/helm-charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kiali-helmrelease
+  namespace: kiali
+spec:
+  interval: 240m
+  releaseName: kiali-server
+  chart:
+    spec:
+      chart: kiali-server
+      version: "1.x"
+      sourceRef:
+        kind: HelmRepository
+        name: kiali-helmrepo
+        namespace: kiali
+      interval: 240m
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  valuesFrom:
+    - kind: ConfigMap
+      name: kiali-base-values
+      valuesKey: values.yaml
+    - kind: ConfigMap
+      name: kiali-level-values
+      valuesKey: values.yaml

@@ -1,0 +1,239 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: local-config
+  namespace: flux-system
+spec:
+  interval: 1m
+  path: "./clusters/local/config"
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  prune: true
+  timeout: 5m
+  force: true # Important: Forces regeneration when component files change
+
+  # Health checks to ensure ConfigMaps are created successfully
+  healthChecks:
+    - apiVersion: v1
+      kind: ConfigMap
+      name: ollama-base-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: ollama-level-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: chatbot-ui-base-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: chatbot-ui-level-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: chatbot-api-base-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: chatbot-api-level-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: agent-ui-base-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: agent-ui-level-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: metrics-server-base-values
+      namespace: metrics-server
+    - apiVersion: v1
+      kind: ConfigMap
+      name: opentelemetry-base-values
+      namespace: opentelemetry
+    - apiVersion: v1
+      kind: ConfigMap
+      name: opentelemetry-level-values
+      namespace: opentelemetry
+    - apiVersion: v1
+      kind: ConfigMap
+      name: keycloak-users-realm
+      namespace: keycloak
+    - apiVersion: v1
+      kind: ConfigMap
+      name: keycloak-base-values
+      namespace: keycloak
+    - apiVersion: v1
+      kind: ConfigMap
+      name: keycloak-level-values
+      namespace: keycloak
+    - apiVersion: v1
+      kind: ConfigMap
+      name: oauth2-proxy-base-values
+      namespace: oauth2-proxy
+    - apiVersion: v1
+      kind: ConfigMap
+      name: oauth2-proxy-level-values
+      namespace: oauth2-proxy
+    - apiVersion: v1
+      kind: ConfigMap
+      name: portal-api-base-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: portal-api-level-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: web-ui-base-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: web-ui-level-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: apidocs-api-base-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: apidocs-api-level-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: admin-api-base-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: admin-api-level-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: admin-ui-base-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: admin-ui-level-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: agent-api-base-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: agent-api-level-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: datadog-base-values
+      namespace: datadog
+    - apiVersion: v1
+      kind: ConfigMap
+      name: datadog-level-values
+      namespace: datadog
+    - apiVersion: v1
+      kind: ConfigMap
+      name: external-dns-base-values
+      namespace: external-dns
+    - apiVersion: v1
+      kind: ConfigMap
+      name: external-dns-level-values
+      namespace: external-dns
+    - apiVersion: v1
+      kind: ConfigMap
+      name: external-secrets-base-values
+      namespace: external-secrets
+    - apiVersion: v1
+      kind: ConfigMap
+      name: external-secrets-level-values
+      namespace: external-secrets
+    - apiVersion: v1
+      kind: ConfigMap
+      name: grafana-base-values
+      namespace: grafana
+    - apiVersion: v1
+      kind: ConfigMap
+      name: grafana-dashboards-app
+      namespace: grafana
+    - apiVersion: v1
+      kind: ConfigMap
+      name: grafana-dashboards-extra
+      namespace: grafana
+    - apiVersion: v1
+      kind: ConfigMap
+      name: grafana-dashboards-istio
+      namespace: grafana
+    - apiVersion: v1
+      kind: ConfigMap
+      name: grafana-dashboards-k8s-addons
+      namespace: grafana
+    - apiVersion: v1
+      kind: ConfigMap
+      name: grafana-dashboards-k8s-system
+      namespace: grafana
+    - apiVersion: v1
+      kind: ConfigMap
+      name: grafana-dashboards-k8s-views
+      namespace: grafana
+    - apiVersion: v1
+      kind: ConfigMap
+      name: grafana-level-values
+      namespace: grafana
+    - apiVersion: v1
+      kind: ConfigMap
+      name: kiali-base-values
+      namespace: kiali
+    - apiVersion: v1
+      kind: ConfigMap
+      name: kiali-level-values
+      namespace: kiali
+    - apiVersion: v1
+      kind: ConfigMap
+      name: memory-api-base-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: memory-api-level-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: memory-distiller-base-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: memory-distiller-level-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: memory-ui-base-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: memory-ui-level-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: portal-ui-base-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: portal-ui-level-values
+      namespace: default
+    - apiVersion: v1
+      kind: ConfigMap
+      name: prometheus-base-values
+      namespace: prometheus
+    - apiVersion: v1
+      kind: ConfigMap
+      name: prometheus-level-values
+      namespace: prometheus
+
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars
+        optional: true
