@@ -1,0 +1,13 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: istio-ingressgateway
+  namespace: istio-system
+spec:
+  values:
+    service:
+      annotations:
+        # Pin the production ingress to the address it already holds. MetalLB otherwise
+        # hands out the lowest free pool address, so a recreated Service could lose it to
+        # another LoadBalancer (e.g. the on-demand Istio canary gateway).
+        metallb.io/loadBalancerIPs: "192.168.2.240"

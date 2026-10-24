@@ -1,0 +1,18 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: prometheus-helmrelease
+  namespace: prometheus
+  annotations:
+    config-updated: "${CONFIG_TIMESTAMP}"
+spec:
+  interval: 60m # Standard interval
+  valuesFrom:
+    - kind: ConfigMap
+      name: prometheus-base-values
+      valuesKey: base.values.yaml
+    - kind: ConfigMap
+      name: prometheus-level-values
+      valuesKey: snbx.values.yaml
+  values:
+    replicaCount: 1

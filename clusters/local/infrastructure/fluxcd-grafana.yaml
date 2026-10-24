@@ -1,0 +1,16 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana-helmrelease
+  namespace: grafana
+  annotations:
+    config-updated: "${CONFIG_TIMESTAMP}"
+spec:
+  interval: 60m # Shorter interval for local development
+  valuesFrom:
+    - kind: ConfigMap
+      name: grafana-base-values
+      valuesKey: base.values.yaml
+    - kind: ConfigMap
+      name: grafana-level-values
+      valuesKey: lcl.values.yaml

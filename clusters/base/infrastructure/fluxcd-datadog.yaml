@@ -1,0 +1,43 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: datadog-helmrepo
+  namespace: datadog
+spec:
+  url: https://helm.datadoghq.com
+  interval: 30m
+  timeout: 1m
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: datadog-agent-helmrelease
+  namespace: datadog
+spec:
+  interval: 30m
+  releaseName: datadog-agent
+  chart:
+    spec:
+      chart: datadog
+      version: "3.x.x"
+      sourceRef:
+        kind: HelmRepository
+        name: datadog-helmrepo
+        namespace: datadog
+      interval: 30m
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  targetNamespace: datadog
+  valuesFrom:
+    - kind: ConfigMap
+      name: datadog-base-values
+      valuesKey: values.yaml
+    - kind: ConfigMap
+      name: datadog-level-values
+      valuesKey: values.yaml

@@ -1,0 +1,169 @@
+# Single owner for every namespace in the cluster.
+#
+# These namespaces used to be declared twice: here (applied by the <env>-config
+# Kustomization) and again inline at the top of each
+# clusters/base/infrastructure/fluxcd-<x>.yaml (applied by <env>-infra). Both run on a 1m
+# interval, so they overwrote each other's kustomize.toolkit.fluxcd.io/name ownership
+# label on every reconcile. This file is now the only declaration.
+#
+# The prune: disabled annotation is deliberate and permanent. Deleting a namespace takes
+# every workload inside it with it, so Flux garbage collection must never do it silently.
+# Trade-off: removing an entry below no longer removes the namespace from the cluster,
+# that is now a deliberate manual step.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: default
+  labels:
+    config-managed-by: flux
+    toolkit.fluxcd.io/tenant: sre-team
+    istio-injection: enabled
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: flux-system
+  labels:
+    config-managed-by: flux
+    toolkit.fluxcd.io/tenant: sre-team
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cert-manager
+  labels:
+    config-managed-by: flux
+    toolkit.fluxcd.io/tenant: sre-team
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: istio-system
+  labels:
+    config-managed-by: flux
+    toolkit.fluxcd.io/tenant: sre-team
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: oauth2-proxy
+  labels:
+    config-managed-by: flux
+    toolkit.fluxcd.io/tenant: sre-team
+    istio-injection: enabled
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: keycloak
+  labels:
+    config-managed-by: flux
+    toolkit.fluxcd.io/tenant: sre-team
+    istio-injection: enabled
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: opentelemetry
+  labels:
+    config-managed-by: flux
+    toolkit.fluxcd.io/tenant: sre-team
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: datadog
+  labels:
+    config-managed-by: flux
+    toolkit.fluxcd.io/tenant: sre-team
+    #istio-injection: enabled # TODO: to fix to re-include network traffic via Istio
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: metrics-server
+  labels:
+    config-managed-by: flux
+    toolkit.fluxcd.io/tenant: sre-team
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: external-dns
+  labels:
+    config-managed-by: flux
+    toolkit.fluxcd.io/tenant: sre-team
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: external-secrets
+  labels:
+    config-managed-by: flux
+    toolkit.fluxcd.io/tenant: sre-team
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kiali
+  labels:
+    config-managed-by: flux
+    toolkit.fluxcd.io/tenant: sre-team
+    #istio-injection: enabled
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prometheus
+  labels:
+    config-managed-by: flux
+    toolkit.fluxcd.io/tenant: sre-team
+    # istio-injection: disabled
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: grafana
+  labels:
+    config-managed-by: flux
+    toolkit.fluxcd.io/tenant: sre-team
+    #istio-injection: enabled # TODO: enable once Grafana is fronted by the mesh
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: reloader
+  labels:
+    config-managed-by: flux
+    toolkit.fluxcd.io/tenant: sre-team
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---

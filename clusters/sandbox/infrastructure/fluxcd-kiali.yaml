@@ -1,0 +1,14 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kiali-helmrelease
+  namespace: kiali
+spec:
+  interval: 240m
+  valuesFrom:
+    - kind: ConfigMap
+      name: kiali-base-values
+      valuesKey: base.values.yaml
+    - kind: ConfigMap
+      name: kiali-level-values
+      valuesKey: snbx.values.yaml

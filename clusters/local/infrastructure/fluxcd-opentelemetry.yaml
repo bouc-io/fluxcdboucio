@@ -1,0 +1,19 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: opentelemetry-operator-helmrelease
+  namespace: opentelemetry
+  annotations:
+    config-updated: "${CONFIG_TIMESTAMP}"
+spec:
+  interval: 60m # Shorter interval for local development
+  releaseName: opentelemetry-operator
+  valuesFrom:
+    - kind: ConfigMap
+      name: opentelemetry-base-values
+      valuesKey: base.values.yaml
+    - kind: ConfigMap
+      name: opentelemetry-level-values
+      valuesKey: lcl.values.yaml
+  values:
+    replicaCount: 1 # Single replica for local

@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base/infrastructure/fluxcd-cert-manager.yaml
+  - ../../base/infrastructure/fluxcd-keycloak.yaml
+  - ../../base/infrastructure/fluxcd-oauth2-proxy.yaml
+  - ../../base/infrastructure/fluxcd-metrics-server.yaml
+  - ../../base/infrastructure/fluxcd-istio.yaml
+  - ../../base/infrastructure/fluxcd-datadog.yaml
+  - ../../base/infrastructure/fluxcd-opentelemetry.yaml
+  - ../../base/infrastructure/fluxcd-external-dns.yaml
+  - ../../base/infrastructure/fluxcd-external-secrets.yaml
+  - ../../base/infrastructure/fluxcd-kiali.yaml
+  - ../../base/infrastructure/fluxcd-prometheus.yaml
+  - ../../base/infrastructure/fluxcd-grafana.yaml
+  - ../../base/infrastructure/fluxcd-reloader.yaml
+
+patches:
+  - path: fluxcd-oauth2-proxy.yaml
+  - path: fluxcd-keycloak.yaml
+  - path: fluxcd-datadog.yaml
+  - path: fluxcd-opentelemetry.yaml
+  - path: fluxcd-external-dns.yaml
+  - path: fluxcd-external-secrets.yaml
+  - path: fluxcd-kiali.yaml
+  - path: fluxcd-prometheus.yaml
+  - path: fluxcd-grafana.yaml
